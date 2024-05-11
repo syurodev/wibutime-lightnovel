@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package lightnovelgrpc;
+
+service LightnovelGRPCService {
+  rpc GetLightnovelDetail (GetLightnovelDetailDTO) returns (LightnovelDetailResponse) {}
+  rpc GetLightnovels (GetLightnovelsRequest) returns (LightnovelsResponse) {}
+}
+
+message GetLightnovelsRequest {
+  optional int32 page = 1;
+  optional int32 skip = 2;
+}
+
+message GetLightnovelDetailDTO {
+  string url_id = 1;
+}
+
+message Image {
+  string key = 1;
+  string url = 2;
+}
+
+message Category {
+  string name = 1;
+}
+
+message LightnovelData {
+  string id = 1;
+  string url_id = 2;
+  string name = 3;
+  repeated Category categories = 4;
+  Image image = 5;
+  string status = 6;
+  int64 created_at = 7;
+}
+
+message LightnovelDetailData {
+  string id = 1;
+  string url_id = 2;
+  string name = 3;
+  repeated string other_names = 4;
+  string author = 5;
+  string artist = 6;
+  Image image = 7;
+  repeated Category categories = 8;
+  string summary = 9;
+  bool deleted = 10;
+  string status = 11;
+  string note = 12;
+  int32 user_id = 13;
+  int64 created_at = 14;
+  int64 updated_at = 15;
+}
+
+message ErrorResponse {
+  string message = 1;
+}
+
+message LightnovelDetailResponse {
+  ErrorResponse error = 1;
+  LightnovelDetailData success = 2;
+}
+
+message LightnovelsResponse {
+  ErrorResponse error = 1;
+  repeated LightnovelData success = 2;
+}

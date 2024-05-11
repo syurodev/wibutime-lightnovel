@@ -1,0 +1,3 @@
+export enum GRPCEnum {
+  PACKAGE = 'LIGHTNOVEL_SERVICE_GRPC',
+}
