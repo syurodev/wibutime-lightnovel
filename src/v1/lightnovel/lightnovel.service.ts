@@ -77,13 +77,14 @@ export class LightnovelService {
       return LIGHTNOVEL_MESSAGE_RESPONSE.USER_INSUFFICIENT_AUTHORITY;
     }
 
-    data.userId = user.data.id;
+    data.user_id = user.data.id;
 
     const createdLightnovel: Lightnovel = await this.lightnovelModel.create({
       ...data,
       summary: JSON.parse(data.summary as string),
       note: JSON.parse(data.note as string),
-      created_at: new Date().getTime(),
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
     });
 
     return createdLightnovel
@@ -117,7 +118,7 @@ export class LightnovelService {
       categories: lightnovel.categories,
       image: lightnovel.image,
       status: lightnovel.status,
-      created_at: lightnovel.createdAt,
+      created_at: lightnovel.createdAt.toString(),
     }));
   }
 
@@ -143,8 +144,8 @@ export class LightnovelService {
           status: existingLightnovel.status,
           note: JSON.stringify(existingLightnovel.note),
           user_id: existingLightnovel.userId,
-          created_at: existingLightnovel.createdAt,
-          updated_at: existingLightnovel.updatedAt,
+          created_at: existingLightnovel.createdAt.toString(),
+          updated_at: existingLightnovel.updatedAt.toString(),
         }
       : null;
   }

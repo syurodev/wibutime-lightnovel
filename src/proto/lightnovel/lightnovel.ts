@@ -19,14 +19,14 @@ export interface CategoryLightnovelCreate {
 export interface CreateLightnovelRequest {
   url_id: string;
   name: string;
-  otherNames: string[];
+  other_names: string[];
   categories: string[];
   author?: string | undefined;
   illustrator?: string | undefined;
   image?: string | undefined;
   summary: string;
   note?: string | undefined;
-  userId: number;
+  user_id: number;
   translation_group_id?: number | undefined;
 }
 
@@ -50,7 +50,7 @@ export interface LightnovelData {
   categories: string[];
   image?: string | undefined;
   status: number;
-  created_at: number;
+  created_at: string;
 }
 
 export interface LightnovelDetailData {
@@ -67,8 +67,8 @@ export interface LightnovelDetailData {
   status: number;
   note?: string | undefined;
   user_id: number;
-  created_at: number;
-  updated_at: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ErrorResponse {
