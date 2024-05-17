@@ -1,64 +1,80 @@
-import { Controller } from '@nestjs/common';
-import { KafkaTopicEnum } from 'src/utils/utils.enums/kafka-topic-enum';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, HttpStatus } from '@nestjs/common';
 
 import { LightnovelService } from './lightnovel.service';
-import { ResponseData } from 'src/utils/utils.response.common/utils.response.common';
 import {
+  CreateLightnovelRequest,
   GetLightnovelDetailDTO,
   GetLightnovelsRequest,
-  LightnovelData,
-  LightnovelDetailData,
-  LightnovelDetailGRPCResponse,
+  LightnovelDetailResponse,
   LightnovelGRPCServiceController,
   LightnovelGRPCServiceControllerMethods,
-} from 'src/protos/lightnovel/lightnovel';
-import { Lightnovel } from './lightnovel.schema/lightnovel.schema';
+} from 'src/proto/lightnovel/lightnovel';
+import { BaseResponseData } from 'src/common/response/base.response.common';
+import { LIGHTNOVEL_MESSAGE_RESPONSE } from 'src/common/enums/lightnovel-message-response.enum';
+import { Metadata } from '@grpc/grpc-js';
+import { getTokenFromGrpcMetadata } from 'src/common/grpc/get-token-from-grpc-metadata';
 
 @Controller()
 @LightnovelGRPCServiceControllerMethods()
 export class LightnovelController implements LightnovelGRPCServiceController {
   constructor(private readonly lightnovelService: LightnovelService) {}
 
-  @MessagePattern(KafkaTopicEnum.CREATE_LIGHTNOVEL)
-  async handleCreateLightnovel(@Payload() data: any): Promise<any> {
-    const response = new ResponseData<Lightnovel>();
-    response.autoGenerateResponse(
-      await this.lightnovelService.createLightnovel(data),
-      'Tạo lightnovel không thành công',
-    );
-    return JSON.stringify(response);
-  }
+  async createLightnovel(
+    request: CreateLightnovelRequest,
+    metadata: Metadata,
+  ): Promise<LightnovelDetailResponse> {
+    const response: BaseResponseData = new BaseResponseData();
 
-  @MessagePattern(KafkaTopicEnum.GET_LIGHTNOVELS)
-  async handleGetLightnovels(
-    @Payload() data: { limit: number; page: number },
-  ): Promise<any> {
-    return await this.lightnovelService.getLightnovels(data);
+    const result = await this.lightnovelService.createLightnovel(
+      request,
+      getTokenFromGrpcMetadata(metadata),
+    );
+
+    if (typeof result === 'string') {
+      response.setMessage(HttpStatus.BAD_REQUEST, result);
+      return response;
+    }
+
+    response.setData(result);
+    return response;
   }
 
   async getLightnovelDetail(
-    data: GetLightnovelDetailDTO,
-  ): Promise<LightnovelDetailGRPCResponse> {
-    const response = new ResponseData<LightnovelDetailData>();
+    request: GetLightnovelDetailDTO,
+  ): Promise<LightnovelDetailResponse> {
+    const response: BaseResponseData = new BaseResponseData();
 
-    const result = await this.lightnovelService.getLightnovelDetail(data.urlId);
+    const result = await this.lightnovelService.getLightnovelDetail(
+      request.url_id,
+    );
 
-    response.autoGenerateResponse(result, 'Không tìm thấy lightnovel');
+    if (!result) {
+      response.setMessage(
+        HttpStatus.NOT_FOUND,
+        LIGHTNOVEL_MESSAGE_RESPONSE.LIGHTNOVEL_NOT_FOUND,
+      );
+    }
 
+    response.setData(result);
     return response;
   }
 
   async getLightnovels(request: GetLightnovelsRequest) {
-    const response = new ResponseData<LightnovelData[]>();
-
+    const response: BaseResponseData = new BaseResponseData();
     const result = await this.lightnovelService.getLightnovels({
       limit: request.skip,
       page: request.page,
     });
-    console.log(result);
 
-    response.autoGenerateResponse(result);
+    if (!result) {
+      response.setMessage(
+        HttpStatus.NOT_FOUND,
+        LIGHTNOVEL_MESSAGE_RESPONSE.LIGHTNOVEL_NOT_FOUND,
+      );
+      return response;
+    }
+
+    response.setData(result);
     return response;
   }
 }

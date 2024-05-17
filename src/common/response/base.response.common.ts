@@ -2,9 +2,9 @@
 import { HttpStatus } from '@nestjs/common';
 
 export class BaseResponseData {
-  private status: HttpStatus;
-  private message: string;
-  private data: Object;
+  public status: HttpStatus;
+  public message: string;
+  public data: any;
 
   constructor(status: number = null, message: string = null, data?: Object) {
     this.status = status ? +status : +HttpStatus.OK;
@@ -27,6 +27,7 @@ export class BaseResponseData {
   public setMessage(status: HttpStatus, message: string): void {
     if (message) {
       this.message = message;
+      this.status = status;
     } else {
       switch (status) {
         case HttpStatus.OK:
@@ -46,7 +47,7 @@ export class BaseResponseData {
     return this.data;
   }
 
-  public setData(data: Object): void {
+  public setData(data: any): void {
     this.data = data;
   }
 }

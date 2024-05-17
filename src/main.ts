@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { Partitioners } from 'kafkajs';
 import {
   HttpException,
   HttpStatus,
@@ -14,9 +13,9 @@ import { config } from 'dotenv';
 config();
 
 import { AppModule } from './app.module';
-import { ExceptionResponseDetail } from './utils/utils.exception.common/utils.exception.common';
-import { KafkaGroupIdEnum } from './utils/utils.enums/kafka-group-id-enum';
-import { LIGHTNOVEL_GRPC_PACKAGE_NAME } from './protos/lightnovel/lightnovel';
+import { LIGHTNOVEL_SERVICE_GRPC_PACKAGE_NAME } from './proto/lightnovel/lightnovel';
+import { ExceptionResponseDetail } from './common/exception/exception.common';
+import { LIGHTNOVEL_CATEGORY_SERVICE_GRPC_PACKAGE_NAME } from './proto/category/category';
 
 async function bootstrap(): Promise<void> {
   process.env.TZ = 'Asia/Ho_Chi_Minh';
@@ -32,29 +31,35 @@ async function bootstrap(): Promise<void> {
   });
 
   //Kafka config
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        brokers: [
-          `${process.env.CONFIG_KAFKA_HOST}:${process.env.CONFIG_KAFKA_PORT}`,
-        ],
-      },
-      consumer: {
-        groupId: KafkaGroupIdEnum.LIGHTNOVEL_SERVICE,
-      },
-      producer: {
-        createPartitioner: Partitioners.LegacyPartitioner,
-      },
-    },
-  });
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.KAFKA,
+  //   options: {
+  //     client: {
+  //       brokers: [
+  //         `${process.env.CONFIG_KAFKA_HOST}:${process.env.CONFIG_KAFKA_PORT}`,
+  //       ],
+  //     },
+  //     consumer: {
+  //       groupId: KafkaGroupIdEnum.LIGHTNOVEL_SERVICE,
+  //     },
+  //     producer: {
+  //       createPartitioner: Partitioners.LegacyPartitioner,
+  //     },
+  //   },
+  // });
 
   //gRPC config
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
-      package: LIGHTNOVEL_GRPC_PACKAGE_NAME,
-      protoPath: join(__dirname, 'protos/lightnovel/lightnovel.proto'),
+      package: [
+        LIGHTNOVEL_SERVICE_GRPC_PACKAGE_NAME,
+        LIGHTNOVEL_CATEGORY_SERVICE_GRPC_PACKAGE_NAME,
+      ],
+      protoPath: [
+        join(__dirname, 'proto/lightnovel/lightnovel.proto'),
+        join(__dirname, 'proto/category/category.proto'),
+      ],
       url: `${process.env.CONFIG_GRPC_HOST}:${process.env.CONFIG_GRPC_PORT}`,
     },
   });

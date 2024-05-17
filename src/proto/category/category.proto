@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package LIGHTNOVEL_CATEGORY_SERVICE_GRPC_PACKAGE;
+
+service LightnovelCategoryGRPCService {
+  rpc CreateCategory (CreateCategoryRequest) returns (CategoryResponse) {}
+
+  rpc UpdateCategory (UpdateCategoryRequest) returns (CategoryResponse) {}
+
+  rpc DeleteCategory (DeleteCategoryRequest) returns (EmptyResponse) {}
+
+  rpc SearchCategory (SearchCategoryRequest) returns (CategoriesResponse) {}
+
+  rpc GetCategories (GetCategoriesRequest) returns (CategoriesResponse) {}
+}
+
+message Category {
+  string id = 1;
+  string name = 2;
+}
+
+message CreateCategoryRequest {
+  string name = 1;
+}
+
+message CategoryResponse {
+  int32 status = 1;
+  string message = 2;
+  Category data = 3;
+}
+
+message UpdateCategoryRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message DeleteCategoryRequest {
+  string id = 1;
+}
+
+message SearchCategoryRequest {
+  string name = 1;
+}
+
+message CategoriesResponse {
+  int32 status = 1;
+  string message = 2;
+  repeated string data = 3;
+}
+
+message GetCategoriesRequest {
+  optional int32 limit = 1;
+  optional int32 page = 2;
+}
+
+message EmptyRequest {}
+
+message EmptyResponse {
+  int32 status = 1;
+  string message = 2;
+}

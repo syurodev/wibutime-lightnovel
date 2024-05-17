@@ -1,18 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-
-import { LightnovelStatus } from 'src/utils/utils.enums/lightnovel-status.enum';
+import { LightnovelStatus } from 'src/common/enums/lightnovel-status.enum';
 
 @Schema()
 export class Lightnovel {
-  @Prop({ type: String, required: true, index: true }) // ID sử dụng trên url
-  url_id: string;
+  @Prop({ type: String, required: true, index: true, alias: 'url_id' }) // ID sử dụng trên url
+  urlId: string;
 
   @Prop({ type: String, required: true, index: true })
   name: string;
 
-  @Prop({ type: [String], required: true, default: [], index: true })
-  other_names: string[];
+  @Prop({
+    type: [String],
+    required: true,
+    default: [],
+    index: true,
+    alias: 'other_names',
+  })
+  otherNames: string[];
 
   @Prop({ type: String })
   author?: string;
@@ -20,11 +25,11 @@ export class Lightnovel {
   @Prop({ type: String })
   illustrator?: string;
 
-  @Prop({ type: Object, default: { key: '', url: '' } })
-  image?: { key: string; url: string };
+  @Prop({ type: String, default: '' })
+  image?: string;
 
   @Prop({ type: Object, default: [], required: true })
-  categories: { id: string; name: string }[];
+  categories: string[];
 
   @Prop({ type: Object, required: true })
   summary: Record<string, any>; // Data output từ tiptap editor
@@ -33,7 +38,7 @@ export class Lightnovel {
   deleted: boolean;
 
   @Prop({
-    type: String,
+    type: Number,
     enum: LightnovelStatus,
     default: LightnovelStatus.InProcess,
   })
@@ -48,17 +53,17 @@ export class Lightnovel {
   @Prop({ type: Object })
   note?: Record<string, any>; // Data output từ tiptap editor
 
-  @Prop({ type: Number, required: true })
-  user_id: number;
+  @Prop({ type: Number, required: true, alias: 'user_id' })
+  userId: number;
 
-  @Prop({ type: Number })
-  translation_group_id?: number;
+  @Prop({ type: Number, alias: 'translation_group_id' })
+  translationGroupId?: number;
 
-  @Prop({ type: Number })
-  created_at: number;
+  @Prop({ type: Number, alias: 'created_at' })
+  createdAt: number;
 
-  @Prop({ type: Number, default: null })
-  updated_at: number;
+  @Prop({ type: Number, default: null, alias: 'updated_at' })
+  updatedAt: number;
 }
 
 export type LightnovelDocument = Lightnovel & Document;

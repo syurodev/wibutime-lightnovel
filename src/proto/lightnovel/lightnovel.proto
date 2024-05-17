@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package LIGHTNOVEL_SERVICE_GRPC_PACKAGE;
+
+service LightnovelGRPCService {
+  rpc CreateLightnovel (CreateLightnovelRequest) returns (LightnovelDetailResponse) {}
+  rpc GetLightnovelDetail (GetLightnovelDetailDTO) returns (LightnovelDetailResponse) {}
+  rpc GetLightnovels (GetLightnovelsRequest) returns (LightnovelsResponse) {}
+}
+
+message CategoryLightnovelCreate {
+  string id = 1;
+  string name = 2;
+}
+
+message CreateLightnovelRequest {
+  string url_id = 1;
+  string name = 2;
+  repeated string other_names = 3;
+  repeated string categories = 4;
+  optional string author = 5;
+  optional string illustrator = 6;
+  optional string image = 7;
+  string summary = 8;
+  optional string note = 9;
+  int32 user_id = 10;
+  optional int32 translation_group_id = 11;
+}
+
+message GetLightnovelsRequest {
+  optional int32 page = 1;
+  optional int32 skip = 2;
+}
+
+message GetLightnovelDetailDTO {
+  string url_id = 1;
+}
+
+message Category {
+  string name = 1;
+}
+
+message LightnovelData {
+  string id = 1;
+  string url_id = 2;
+  string name = 3;
+  repeated string categories = 4;
+  optional string image = 5;
+  int32 status = 6;
+  int64 created_at = 7;
+}
+
+message LightnovelDetailData {
+  string id = 1;
+  string url_id = 2;
+  string name = 3;
+  repeated string other_names = 4;
+  optional string author = 5;
+  optional string illustrator = 6;
+  optional string image = 7;
+  repeated string categories = 8;
+  string summary = 9;
+  bool deleted = 10;
+  int32 status = 11;
+  optional string note = 12;
+  int32 user_id = 13;
+  int64 created_at = 14;
+  int64 updated_at = 15;
+}
+
+message ErrorResponse {
+  string message = 1;
+}
+
+message LightnovelDetailResponse {
+  int32 status = 1;
+  string message = 2;
+  LightnovelDetailData data = 3;
+}
+
+message LightnovelsResponse {
+  int32 status = 1;
+  string message = 2;
+  repeated LightnovelData data = 3;
+}

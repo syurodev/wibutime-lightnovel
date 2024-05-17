@@ -7,14 +7,11 @@ import {
   ValidateNested,
   IsNotEmpty,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ImageDto } from './image.dto';
-import { CategoryDto } from './category.dto';
 
 export class LightnovelCreateDto {
   @IsOptional()
   @IsString()
-  url_id?: string;
+  urlId?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -23,13 +20,13 @@ export class LightnovelCreateDto {
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
-  other_names: string[];
+  otherNames: string[];
 
   @IsNotEmpty()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CategoryDto)
-  categories: CategoryDto[];
+  // @ValidateNested({ each: true })
+  // @Type(() => CategoryDto)
+  categories: string[];
 
   @IsOptional()
   @IsString()
@@ -40,24 +37,23 @@ export class LightnovelCreateDto {
   illustrator?: string;
 
   @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => ImageDto)
-  image?: ImageDto;
+  @IsString()
+  // @Type(() => ImageDto)
+  image?: string;
 
   @IsNotEmpty()
-  @IsObject()
-  summary: object;
+  @IsString()
+  summary: string;
 
   @IsOptional()
-  @IsObject()
-  note?: object;
+  @IsString()
+  note?: string;
 
   @IsNotEmpty()
   @IsNumber()
-  user_id: number;
+  userId: number;
 
   @IsOptional()
   @IsNumber()
-  translation_group_id?: number;
+  translationGroupId?: number;
 }
